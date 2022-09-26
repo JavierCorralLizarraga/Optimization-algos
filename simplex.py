@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import numpy as np
-
+from GaussJordan import GaussJordanElimination
 #%% parametros
 # funcion objetivo
 obj = "-2x-3y-3z"
@@ -41,10 +41,12 @@ def canonica(obj, rest):
     tbl = np.hstack((A, np.array(b)[:,np.newaxis]))
     z = coef + list(np.zeros(len(A))) + [0]
     tbl = np.vstack((tbl, z))
-    return tbl
+    return tbl.astype(float)
 # declaracion de la funcion (posterior)
 def simplex(obj, rest):
-    return canonica(obj, rest)
+    tbl = canonica(obj, rest)
+    a = GaussJordanElimination(tbl)
+    return a
     #if not is_sbfo():
       #  return no acotado
     #if is_sbfo():
