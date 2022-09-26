@@ -36,13 +36,19 @@ def canonica(obj, rest):
             else:
                 A[i][j]= int(A[i][j])
     # tabla en forma 
-    tbl = np.hstack((np.array(A), np.array(b)[:,np.newaxis]))
-    z = coef + [0]
+    A = np.array(A)
+    A = np.hstack((A, np.identity(len(A))))
+    tbl = np.hstack((A, np.array(b)[:,np.newaxis]))
+    z = coef + list(np.zeros(len(A))) + [0]
     tbl = np.vstack((tbl, z))
     return tbl
-#%% declaracion de la funcion (posterior)
+# declaracion de la funcion (posterior)
 def simplex(obj, rest):
     return canonica(obj, rest)
+    #if not is_sbfo():
+      #  return no acotado
+    #if is_sbfo():
+     #   return "no acotado "
         
-#%% solucionamos
+# solucionamos
 print(simplex(obj, rest))
