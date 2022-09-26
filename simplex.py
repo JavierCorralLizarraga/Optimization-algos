@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 import numpy as np
-from GaussJordan import GaussJordanElimination
+from GaussJordan import Pivoteo
 #%% parametros
+# minimizacion siempre
 # funcion objetivo
 obj = "-2x-3y-3z"
 # arreglo de restricciones (asumimos que todas las variables son mayores a 0)
@@ -49,9 +50,6 @@ def isOptimal(tbl):
         return True
     else:
         return False
-#%%
-def isUnbounded():
-    pass
 #%% 
 def findPivotVariable(tbl):
     coefs = tbl[-1][:-1]
@@ -60,29 +58,29 @@ def findPivotVariable(tbl):
     index = np.array(index).flat[0]
     a = tbl[:,index][:-1] # columna 
     b = tbl[:,-1][:-1]
-    c = []
+    ratios = []
     for i,j in zip(a,b):
-        c.append(j/i)
-    c = np.array(c)
-    #if np.any(c >= 0)):
-    m = min(c)
-    index2 = np.where(c == m)
-    return tbl[index, index2].flat[0]
+        ratios.append(j/i)
+    ratios = np.array(ratios)
+    if np.any(ratios > 0):
+        m = min(ratios)
+        index2 = np.where(ratios == m)
+        return tbl[index, index2].flat[0]
+    else:
+        return "unbounded"
     
 #%% 
-
+    
 # declaracion de la funcion (posterior)
 def simplex(obj, rest):
     tbl = canonica(obj, rest)
     print(tbl)
-    #while not isOptimal(tbl):
-        #pass
-    #Unbounded():
-        #return "unbounded"
-    pv = findPivotVariable(tbl)
-    return tbl[-1][-1]
+    while not isOptimal(tbl):
+        pv = findPivotVariable(tbl)
+        if pv == "unbounded":
+            return "unbounded"
+        pivoteo(column, )
         
-    #a = GaussJordanElimination(tbl)
     #return a
     #if not is_sbfo():
       #  return no acotado

@@ -14,6 +14,24 @@ def addRow(M, row1, row2, factor):
      M[row2,:] = M[row2,:] + multRow(M.copy(), row1, factor)[row1, :]
      return M
 
+def pivoteo(M, row, column):
+    if M[row, column] != 1:
+        M = multRow(M, row, 1/M[row, column])
+    a = list(enumerate(m))
+    a.pop(row)
+    for ind, i in a:
+        M = addRow(M, row, ind, -i)
+    return M
+
+m = np.array([[5, 4, 5, 12], 
+              [-1, 8, 9, 0],
+              [1, 7, 11, 19]], dtype = float)
+
+print(m)
+
+a=pivoteo(m, 1, 1)
+print(a)
+#%%    
 def GaussJordanElimination(M):
     for ind, i in enumerate(np.transpose(M)):
         if ind < len(M):
