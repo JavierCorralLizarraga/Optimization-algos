@@ -42,11 +42,48 @@ def canonica(obj, rest):
     z = coef + list(np.zeros(len(A))) + [0]
     tbl = np.vstack((tbl, z))
     return tbl.astype(float)
+
+#%% checa si es solucion optima
+def isOptimal(tbl):
+    if np.all(tbl[-1][:-1] >=0):
+        return True
+    else:
+        return False
+#%%
+def isUnbounded():
+    pass
+#%% 
+def findPivotVariable(tbl):
+    coefs = tbl[-1][:-1]
+    minNegCoef =  min(coefs)
+    index = np.where(coefs == minNegCoef)
+    index = np.array(index).flat[0]
+    a = tbl[:,index][:-1] # columna 
+    b = tbl[:,-1][:-1]
+    c = []
+    for i,j in zip(a,b):
+        c.append(j/i)
+    c = np.array(c)
+    #if np.any(c >= 0)):
+    m = min(c)
+    index2 = np.where(c == m)
+    return tbl[index, index2].flat[0]
+    
+#%% 
+
 # declaracion de la funcion (posterior)
 def simplex(obj, rest):
     tbl = canonica(obj, rest)
-    a = GaussJordanElimination(tbl)
-    return a
+    print(tbl)
+    #while not isOptimal(tbl):
+        #pass
+    #Unbounded():
+        #return "unbounded"
+    pv = findPivotVariable(tbl)
+    return tbl[-1][-1]
+        
+    #a = GaussJordanElimination(tbl)
+    #return a
     #if not is_sbfo():
       #  return no acotado
     #if is_sbfo():
