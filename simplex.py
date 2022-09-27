@@ -13,7 +13,11 @@ rest = [
     "3x + 2y + z <= 10",
     "2x + 5y + 3z <= 15"
     ]
-#obj = "-8x - 10y -7"
+obj = "-8x -10y -7z"
+rest =[
+       "x + 3y + 2z <= 10",
+       "x + 5y +  z <= 8"
+       ]
 
 #%%
 # declaracion de la funcion (posterior)
@@ -27,7 +31,7 @@ def simplex(obj, rest):
         if pv == "unbounded":
             return "unbounded"
         tbl = pivoteo(tbl, row, column)
-        if count == 5:
+        if count == 10:
             break
         count+=1
     return tbl

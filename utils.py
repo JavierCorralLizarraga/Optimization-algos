@@ -7,7 +7,8 @@ def canonica(obj, rest):
     # construimos forma canonica (estandar)
     # coeficientes
     coef = re.split("[A-Za-z]", obj)[:-1]
-    coef = [int(i) for i in coef]
+    print(coef)
+    coef = [float(i) for i in coef]
     # vector b
     b = []
     for i in rest:
@@ -43,7 +44,7 @@ def isOptimal(tbl):
     
 def findPivotVariable(tbl):
     coefs = tbl[-1][:-1]
-    minNegCoef =  min(coefs)
+    minNegCoef =  min(coefs[:-1])
     index = np.where(coefs == minNegCoef)
     index = np.array(index).flat[0]
     a = tbl[:,index][:-1] # columna 
@@ -59,3 +60,4 @@ def findPivotVariable(tbl):
         return tbl[index, index2].flat[0], np.array(index2).flat[0], index
     else:
         return "unbounded", 0,0 
+    
