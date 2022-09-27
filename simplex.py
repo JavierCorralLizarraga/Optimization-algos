@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import numpy as np
-from GaussJordan import Pivoteo
+from GaussJordan import pivoteo
 #%% parametros
 # minimizacion siempre
 # funcion objetivo
@@ -65,27 +65,30 @@ def findPivotVariable(tbl):
     if np.any(ratios > 0):
         m = min(ratios)
         index2 = np.where(ratios == m)
-        return tbl[index, index2].flat[0]
+        #print(np.array(index2).flat[0])
+        return tbl[index, index2].flat[0], np.array(index2).flat[0], index
     else:
-        return "unbounded"
+        return "unbounded", 0,0
     
 #%% 
+tbl = canonica(obj, rest)
+print(tbl)
+tbl = np.array(tbl, dtype = float)
+print(tbl)
+tbl = pivoteo(tbl, 0, 0)
+print(tbl)
+#%%
     
 # declaracion de la funcion (posterior)
 def simplex(obj, rest):
     tbl = canonica(obj, rest)
-    print(tbl)
+    tbl = np.array(tbl, dtype = float)
     while not isOptimal(tbl):
-        pv = findPivotVariable(tbl)
+        pv, row, column = findPivotVariable(tbl)
         if pv == "unbounded":
             return "unbounded"
-        pivoteo(column, )
-        
-    #return a
-    #if not is_sbfo():
-      #  return no acotado
-    #if is_sbfo():
-     #   return "no acotado "
+        tbl = pivoteo(tbl, row, column)
+    return tbl
         
 # solucionamos
 print(simplex(obj, rest))
