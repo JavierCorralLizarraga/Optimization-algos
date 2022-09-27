@@ -13,29 +13,32 @@ def multRow(M, row, factor):
 def addRow(M, row1, row2, factor):
      M[row2,:] = M[row2,:] + multRow(M.copy(), row1, factor)[row1, :]
      return M
-
+#%%
 def pivoteo(M, row, column):
+    M = np.array(M, dtype = float)
     if M[row, column] != 1:
-        M = multRow(M.copy(), row, 1/M[row, column])
-    a = list(enumerate(m))
+        M = multRow(M, row, 1/M[row, column])
+    a = list(enumerate(M))
     a.pop(row)
     for ind, i in a:
-        M = addRow(M, row, ind, -i)
+        #print(ind, i)
+        M = addRow(M, row, ind, -i[column])
     return M
 
-m = np.array([[5, 4, 5, 12], 
-              [-1, 8, 9, 0],
-              [1, 7, 11, 19]], dtype = float)
+# m = np.array([[5, 4, 5, 12], 
+#               [-1, 8, 9, 0],
+#               [1, 7, 11, 19]], dtype = float)
 
-m = np.array([[ 3,  2,  1,  1,  0, 10],
-              [ 2,  5,  3,  0,  1, 15],
-              [-2, -3, -3,  0,  0,  0]], dtype =  float)
+# m = np.array([[ 3,  2,  1,  1,  0, 10],
+#               [ 2,  5,  3,  0,  1, 15],
+#               [-2, -3, -3,  0,  0,  0]], dtype =  float)
 
-print(m)
+#print(m)
 
-a=pivoteo(m, 0, 0)
-print(a)
-#%%    
+#s=pivoteo(m, 1, 2)
+#print(s)
+
+#%%
 def GaussJordanElimination(M):
     for ind, i in enumerate(np.transpose(M)):
         if ind < len(M):
@@ -60,11 +63,11 @@ def GaussJordanElimination(M):
     return M
         
     
-m = np.array([[5, 4, 5, 12], 
-              [-1, 8, 9, 0],
-              [1, 7, 11, 19]], dtype = float)
+# m = np.array([[5, 4, 5, 12], 
+#               [-1, 8, 9, 0],
+#               [1, 7, 11, 19]], dtype = float)
    
-a=GaussJordanElimination(m)
-print(a)
+# a=GaussJordanElimination(m)
+# print(a)
 
          
