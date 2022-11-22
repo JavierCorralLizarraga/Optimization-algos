@@ -63,15 +63,19 @@ def canonica(A, b, c): # tomamos nuestras matrices y arreglos creamos un tableo
     tbl = np.vstack((tbl, z))
     return tbl.astype(float)
 
+def solIsEmpty(tbl, auxVars):
+    return np.any(tbl[-1][-auxVars:] >= 0) # si alguna de los coeficientes de las vars auxiliares es positivo
+ 
 def simplex(A, b, c):
     tbl = canonica(A, b, c) # crea el tableo 
-    tbl = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    tbl, auxVars = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
     while True: # iteramos un rato
-        if isOptimal(tbl): return tbl # rompemos si es optimo
+        if isOptimal(tbl): break # rompemos si es optimo
         pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
         if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
         tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
-
+    tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
+        
 def main():
     #probs = ['problema_A', 'problema_B', 'problema_C']
     #for i in probs:
@@ -85,11 +89,9 @@ def main():
     #    restr = prob[sa+1:var] 
     #    preA = [item.split(' ')[:-2] for item in restr]
     #    preb = [item.split(' ')[-1] for item in restr]
-    tbl = np.array([[1,2,1,3],[2,3,5,1],[1,23,4,1]])   
-    print(convertGranM(tbl, 100))
     #PPL1 = matrixForm(preA, preb, prec)
     #PPL1 = [A, b, c]
     #print(simplex(*PPL1)
-    
+    print(solIsEmpty(tbl, 2))
 
 if __name__=="__main__": main() # lo que se corre
