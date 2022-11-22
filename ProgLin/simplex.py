@@ -1,99 +1,95 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-def swapRow(M, row1, row2):
+
+def swapRow(M, row1, row2): # operacion elemental de intercambiar renglones
     M[[row1, row2]] = M[[row2, row1]]
     return M
     
-def multRow(M, row, factor):
+def multRow(M, row, factor): # operacion elemental de multiplicar renglones por una constante
     M[row,:] = M[row,:] * factor
     return M
     
-def addRow(M, row1, row2, factor):
+def addRow(M, row1, row2, factor): # operacion elemental de sumar un multiplo de un renglon a otro
      M[row2,:] = M[row2,:] + multRow(M.copy(), row1, factor)[row1, :]
      return M
  
-def pivoteo(M, row, column):
+def pivoteo(M, row, column): # se pivotea un renglon y una columna de la matriz 
     M = np.array(M, dtype = float)
     if M[row, column] != 1:
         M = multRow(M, row, 1/M[row, column])
-    a = list(enumerate(M))
-    a.pop(row)
-    for ind, i in a:
-        #print(ind, i)
+    _ = list(enumerate(M)); _.pop(row)
+    for ind, i in _:
         M = addRow(M, row, ind, -i[column])
     return M
 
-def isOptimal(tbl):
-    if np.all(tbl[-1][:-1] >=0):
-        return True
-    else:
-        return False
+def convertGranM(tbl, M): # le agrega a nuestro tableo una identidad con coeficientes asociados de M
+    numRestr = tbl.shape[0]-1
+    return np.hstack((tbl, np.vstack((np.identity(numRestr), np.ones(numRestr)*M))))
+
+def isOptimal(tbl): # checa si es optima la solucion basica factible
+    return True if np.all(tbl[-1][:-1] >=0) else False # si todos los coeficientes son no negativos
     
-def findPivotVariable(tbl):
+def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continuacion
     coefs = tbl[-1][:-1]
-    minNegCoef =  min(coefs[:-1])
+    minNegCoef =  min(coefs[:-1]) # encuentra el coeficiente mas negativo por regla de Bland
     index = np.where(coefs == minNegCoef)
-    print(index)
     index = np.array(index).flat[0]
-    a = tbl[:,index][:-1] # columna 
+    a = tbl[:,index][:-1]
     b = tbl[:,-1][:-1]
-    ratios = []
+    ratios = [] # arreglo para acumular los ratios
     for i,j in zip(a,b):
-        ratios.append(j/i)
+        ratios.append(j/i) # calculamos los ratios
     ratios = np.array(ratios)
-    if np.any(ratios > 0):
-        m = min(ratios)
-        index2 = np.where(ratios == m)
-        #print(np.array(index2).flat[0])
-        return tbl[index, index2].flat[0], np.array(index2).flat[0], index
+    if np.any(ratios > 0): # si encontramos ratios positivos
+        m = min(ratios) # tomamos el minimo
+        index2 = np.where(ratios == m) # encontramos en que renglon esta
+        return tbl[index, index2].flat[0], np.array(index2).flat[0], index # regresamos el valor de la variable pivote, su renglon y su columna
     else:
         return "unbounded", 0,0 
-
-def simplex(tbl):
-    #tbl = canonica(obj, rest)
-    tbl = np.array(tbl, dtype = float)
-    print(tbl)
-    count=0
-    while not isOptimal(tbl):
-        pv, row, column = findPivotVariable(tbl)
-        if pv == "unbounded":
-            return "unbounded"
-        tbl = pivoteo(tbl, row, column)
-        if count == 0:
-            break
-        count+=1
-    return tbl
-        
-def canonica(A, b, c):
+    
+# def matrixForm(preA, preb, prec): # pasamos de nuestra formulacion en lenguaje natural a matrices
+#     A = list(map(lambda x: x.remove('+')
+#                  , map(lambda x: x, preA)))
+#     #A=''
+#     return [A, b, c]
+    
+def canonica(A, b, c): # tomamos nuestras matrices y arreglos creamos un tableo
+    #en definitiva el problema radica en la notacion    
+    pass
     A = np.array(A)
     A = np.hstack((A, np.identity(len(A))))
     tbl = np.hstack((A, np.array(b)[:,np.newaxis]))
-    z = coef + list(np.zeros(len(A))) + [0]
+    z = c + list(np.zeros(len(A))) + [0]
     tbl = np.vstack((tbl, z))
     return tbl.astype(float)
 
-def matrixForm(preA, preb, prec):
-    pass
+def simplex(A, b, c):
+    tbl = canonica(A, b, c) # crea el tableo 
+    tbl = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    while True: # iteramos un rato
+        if isOptimal(tbl): return tbl # rompemos si es optimo
+        pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
+        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+        tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
 
 def main():
     #probs = ['problema_A', 'problema_B', 'problema_C']
     #for i in probs:
     #    with open(i, 'r') as file:
     #        print(file.read())
-    with open('problema_A', 'r') as file:
-       prob = file.read().split("\n")
-       sa = prob.index('sa') ; var = prob.index('vars')
-       print(sa, var)
-       prec = prob[2]
-       preA = prob[3]
-       preb = ''
-     
-    print(preA, preb, prec)
-       
+    # with open('problema_A', 'r') as file:
+    #    prob = file.read().split("\n")
+    #    sa = prob.index('sa') ; var = prob.index('vars')
+    #    #print(sa, var)
+    #    prec = prob[2]
+    #    restr = prob[sa+1:var] 
+    #    preA = [item.split(' ')[:-2] for item in restr]
+    #    preb = [item.split(' ')[-1] for item in restr]
+    tbl = np.array([[1,2,1,3],[2,3,5,1],[1,23,4,1]])   
+    print(convertGranM(tbl, 100))
+    #PPL1 = matrixForm(preA, preb, prec)
     #PPL1 = [A, b, c]
-    #tbl = canonica(*PPL1)
+    #print(simplex(*PPL1)
     
-    #print(sol := simplex(tbl))
-    #print('a')
-if __name__=="__main__":
-    main()
+
+if __name__=="__main__": main() # lo que se corre
