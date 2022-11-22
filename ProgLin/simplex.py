@@ -22,9 +22,9 @@ def pivoteo(M, row, column): # se pivotea un renglon y una columna de la matriz
         M = addRow(M, row, ind, -i[column])
     return M
 
-def convertGranM(tbl, M): # le agrega a nuestro tableo una identidad con coeficientes asociados de M
-    numRestr = tbl.shape[0]-1
-    return np.hstack((tbl, np.vstack((np.identity(numRestr), np.ones(numRestr)*M))))
+def convertGranM(A, M): # le agrega a nuestro tableo una identidad con coeficientes asociados de M
+    numRestr = A.shape[0]-1
+    return np.hstack((A, np.vstack((np.identity(numRestr), np.ones(numRestr)*M))))
 
 def isOptimal(tbl): # checa si es optima la solucion basica factible
     return True if np.all(tbl[-1][:-1] >=0) else False # si todos los coeficientes son no negativos
@@ -66,32 +66,29 @@ def canonica(A, b, c): # tomamos nuestras matrices y arreglos creamos un tableo
 def solIsEmpty(tbl, auxVars):
     return np.any(tbl[-1][-auxVars:] >= 0) # si alguna de los coeficientes de las vars auxiliares es positivo
  
-def simplex(A, b, c):
-    tbl = canonica(A, b, c) # crea el tableo 
-    tbl, auxVars = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
-    while True: # iteramos un rato
-        if isOptimal(tbl): break # rompemos si es optimo
-        pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
-        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
-        tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
-    tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
+def simplex(tbl):
+    #print('la matriz original se ve asi:')
+    #print(tbl)
+    A = np.transpose(np.transpose(tbl[:-1])[:-1])
+    A = tbl
+    print(A)
+    tbl = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    #print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
+    #print(tbl)
+    #while True: # iteramos un rato
+    #     if isOptimal(tbl): break # rompemos si es optimo
+    #     pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
+    #     if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+    #     tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
+    # return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
         
 def main():
-    #probs = ['problema_A', 'problema_B', 'problema_C']
-    #for i in probs:
-    #    with open(i, 'r') as file:
-    #        print(file.read())
-    # with open('problema_A', 'r') as file:
-    #    prob = file.read().split("\n")
-    #    sa = prob.index('sa') ; var = prob.index('vars')
-    #    #print(sa, var)
-    #    prec = prob[2]
-    #    restr = prob[sa+1:var] 
-    #    preA = [item.split(' ')[:-2] for item in restr]
-    #    preb = [item.split(' ')[-1] for item in restr]
-    #PPL1 = matrixForm(preA, preb, prec)
-    #PPL1 = [A, b, c]
-    #print(simplex(*PPL1)
-    print(solIsEmpty(tbl, 2))
+    tblC = np.array([[1, 1, -1, 0, 0, 1, 0, 0, 0, 0, 2], 
+                    [1, 1, 2, 3, 0, 0, 1, 0, 0, 0, 10],
+                    [3, 0, 0, 1, -1, 0, 0, 1, 0, 0, 5], 
+                    [-3, 0, 0, -1, 1, 0, 0, 0, 1, 0, -5], 
+                    [0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 2], 
+                    [3, 6, -1, 2, 7, 0, 0, 0, 0, 0, 0]])
+    print(simplex(tblC))
 
 if __name__=="__main__": main() # lo que se corre
