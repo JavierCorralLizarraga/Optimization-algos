@@ -24,7 +24,7 @@ def pivoteo(M, row, column): # se pivotea un renglon y una columna de la matriz
 
 def convertGranM(A, M): # le agrega a nuestro tableo una identidad con coeficientes asociados de M
     numRestr = A.shape[0]-1
-    return np.hstack((A, np.vstack((np.identity(numRestr), np.ones(numRestr)*M))))
+    return np.hstack((A, np.vstack((np.identity(numRestr), np.ones(numRestr)*M)))), numRestr
 
 def isOptimal(tbl): # checa si es optima la solucion basica factible
     return True if np.all(tbl[-1][:-1] >=0) else False # si todos los coeficientes son no negativos
@@ -54,7 +54,7 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
             ratios.append(0)
     ratios = np.array(ratios)
     if np.any(ratios > 0): # si encontramos ratios positivos
-        m = min([i for i in ratios if i > 0]) # tomamos el minimo
+        m = min([i for i in ratios if i > 0]) # tomamos el minimo POSITIVO
         index2 = np.where(ratios == m) # encontramos en que renglon esta
         row = index
         column = np.array(index2).flat[0]
@@ -62,33 +62,44 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
         return value, row, column # regresamos el valor de la variable pivote, su renglon y su columna
     else:
         return "unbounded", 0,0 
- 
+
+def basica(column):
+    return sum(column) == 1 and len([c for c in column if c == 0]) == len(column) - 1
+
+def sbfInterpret(tbl):
+    columns = np.array(tbl).T
+    sols = []
+    for column in columns[:-1]:
+        sol = 0
+        if basica(column):
+            one_index = column.tolist().index(1)
+            sol = columns[-1][one_index]
+        sols.append(sol)
+    return sols
+     
 def simplex(A, b, c, M):
     tbl = canonica(A, b, c)
     print('la matriz original se ve asi:')
     print(tbl)
-    # A = np.transpose(np.transpose(tbl)[:-1])
-    # A = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M
-    # b = np.transpose(tbl)[-1].reshape(-1, 1)
-    # tbl = np.hstack((A,b))
-    # print(tbl)
-    # print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
-    # print(tbl)
-    #print(tbl)
+    A = np.transpose(np.transpose(tbl)[:-1])
+    A, auxVars = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    b = np.transpose(tbl)[-1].reshape(-1, 1)
+    tbl = np.hstack((A,b))
+    print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
+    print(tbl)
     count = 0
     while True: # iteramos un rato
         if isOptimal(tbl): break # rompemos si es optimo
         print('la matriz no es optima, asi que pivotearemos')
         pv, column, row = findPivotVariable(tbl) # encontramos la variable pivote
         print('el valor del pivote es: ' + str(pv) + ' con columna: ' + str(column+1) + ' y renglon: ' + str(row+1))
-        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+        if pv == "unbounded": return tbl, "unbounded" # rompemos si es un problema no acotado
         tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
+        print('nuestra matriz pivoteada se ve asi: ')
         print(tbl)
-        count = count+1
-        #if count == 2:
-        #    break
-    return 'a'
-    #return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
+    if not solIsEmpty(tbl, auxVars): return "the solution space is empty"
+    #if multSol(tbl): return tbl, "there are multiple solutions"
+    return tbl, 'esta es nuestra tabla optima'
         
 def main():
     A = [
@@ -99,7 +110,10 @@ def main():
     b = [10,2,6]
     c = [0,-9,-1,0,2,1]
     #out = ''
-    simplex(A, b, c, 100)
-    #print(tbl)
-
+    tbl, comment = simplex(A, b, c, 100)
+    print(comment)
+    if comment == 'esta es nuestra tabla optima':
+        print('y nuestra sbf se ve asi: ')
+        print(sbfInterpret(tbl))
+        
 if __name__=="__main__": main() # lo que se corre
