@@ -1,0 +1,30 @@
+function simplex(A, b, c):
+    tbl = canonica(A, b, c) # crea el tableo 
+    tbl, auxVars = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    while True: # iteramos un rato
+        if isOptimal(tbl): break # rompemos si es optimo
+        pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
+        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+        tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
+    return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
+end
+
+function main():
+    #probs = ['problema_A', 'problema_B', 'problema_C']
+    #for i in probs:
+    #    with open(i, 'r') as file:
+    #        print(file.read())
+    # with open('problema_A', 'r') as file:
+    #    prob = file.read().split("\n")
+    #    sa = prob.index('sa') ; var = prob.index('vars')
+    #    #print(sa, var)
+    #    prec = prob[2]
+    #    restr = prob[sa+1:var] 
+    #    preA = [item.split(' ')[:-2] for item in restr]
+    #    preb = [item.split(' ')[-1] for item in restr]
+    #PPL1 = matrixForm(preA, preb, prec)
+    #PPL1 = [A, b, c]
+    #print(simplex(*PPL1)
+    print(solIsEmpty(tbl, 2))
+
+if __name__=="__main__": main() # lo que se correef swapRow(M, row1, row2): # operacion elemental de intercambiar renglones

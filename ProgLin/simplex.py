@@ -47,34 +47,26 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
     else:
         return "unbounded", 0,0 
     
-# def matrixForm(preA, preb, prec): # pasamos de nuestra formulacion en lenguaje natural a matrices
-#     A = list(map(lambda x: x.remove('+')
-#                  , map(lambda x: x, preA)))
-#     #A=''
-#     return [A, b, c]
-    
 def canonica(A, b, c): # tomamos nuestras matrices y arreglos creamos un tableo
-    #en definitiva el problema radica en la notacion    
-    pass
     A = np.array(A)
-    A = np.hstack((A, np.identity(len(A))))
     tbl = np.hstack((A, np.array(b)[:,np.newaxis]))
-    z = c + list(np.zeros(len(A))) + [0]
+    z = c + [0]
     tbl = np.vstack((tbl, z))
     return tbl.astype(float)
 
 def solIsEmpty(tbl, auxVars):
     return np.any(tbl[-1][-auxVars:] >= 0) # si alguna de los coeficientes de las vars auxiliares es positivo
  
-def simplex(tbl):
-    #print('la matriz original se ve asi:')
-    #print(tbl)
-    A = np.transpose(np.transpose(tbl[:-1])[:-1])
-    A = tbl
-    print(A)
-    tbl = convertGranM(tbl, 100) # agrega las vars auxiliares para aplicar el metodo de la gran M
-    #print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
-    #print(tbl)
+def simplex(A, b, c, M):
+    tbl = canonica(A, b, c)
+    print('la matriz original se ve asi:')
+    print(tbl)
+    A = np.transpose(np.transpose(tbl)[:-1])
+    A = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    b = np.transpose(tbl)[-1].reshape(-1, 1)
+    tbl = np.hstack((A,b))
+    print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
+    print(tbl)
     #while True: # iteramos un rato
     #     if isOptimal(tbl): break # rompemos si es optimo
     #     pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
@@ -83,12 +75,16 @@ def simplex(tbl):
     # return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
         
 def main():
-    tblC = np.array([[1, 1, -1, 0, 0, 1, 0, 0, 0, 0, 2], 
-                    [1, 1, 2, 3, 0, 0, 1, 0, 0, 0, 10],
-                    [3, 0, 0, 1, -1, 0, 0, 1, 0, 0, 5], 
-                    [-3, 0, 0, -1, 1, 0, 0, 0, 1, 0, -5], 
-                    [0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 2], 
-                    [3, 6, -1, 2, 7, 0, 0, 0, 0, 0, 0]])
-    print(simplex(tblC))
+    A = [
+        [1, 1, -1, 0, 0, 1, 0, 0, 0, 0], 
+        [1, 1, 2, 3, 0, 0, 1, 0, 0, 0],
+        [3, 0, 0, 1, -1, 0, 0, 1, 0, 0], 
+        [-3, 0, 0, -1, 1, 0, 0, 0, 1, 0], 
+        [0, 1, 2, 0, 0, 0, 0, 0, 0, 1]
+        ]
+    b = [2, 10, 5, -5, 2]
+    c = [3, 6, -1, 2, 7, 0, 0, 0, 0, 0]
+    simplex(A, b, c, 100)
+    #print(tbl)
 
 if __name__=="__main__": main() # lo que se corre
