@@ -53,10 +53,13 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
         else:
             ratios.append(0)
     ratios = np.array(ratios)
-    if np.any(ratios > 0): #si encontramos ratios positivos
+    if np.any(ratios > 0): # si encontramos ratios positivos
         m = min([i for i in ratios if i > 0]) # tomamos el minimo
         index2 = np.where(ratios == m) # encontramos en que renglon esta
-        return tbl[index, index2].flat[0], np.array(index2).flat[0], index # regresamos el valor de la variable pivote, su renglon y su columna
+        row = index
+        column = np.array(index2).flat[0]
+        value = tbl[column, row].flat[0]
+        return value, row, column # regresamos el valor de la variable pivote, su renglon y su columna
     else:
         return "unbounded", 0,0 
  
@@ -71,21 +74,20 @@ def simplex(A, b, c, M):
     # print(tbl)
     # print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
     # print(tbl)
-    pv, row, column = findPivotVariable(tbl)
-    tbl = pivoteo(tbl, row, column)
-    print(tbl)
-    # count = 0
-    # while True: # iteramos un rato
-    #     if isOptimal(tbl): break # rompemos si es optimo
-    #     print('la matriz no es optima')
-    #     pv, column, row = findPivotVariable(tbl) # encontramos la variable pivote
-    print('el valor del pivote es: ' + str(pv) + ' con columna: ' + str(column+1) + ' y renglon: ' + str(row+1))
-    #     if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
-    #     tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
-    #     print(count)
-    #     count = count+1
-    #     if count == 10:
-    #         break
+    #print(tbl)
+    count = 0
+    while True: # iteramos un rato
+        if isOptimal(tbl): break # rompemos si es optimo
+        print('la matriz no es optima, asi que pivotearemos')
+        pv, column, row = findPivotVariable(tbl) # encontramos la variable pivote
+        print('el valor del pivote es: ' + str(pv) + ' con columna: ' + str(column+1) + ' y renglon: ' + str(row+1))
+        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+        tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
+        print(tbl)
+        print(count)
+        count = count+1
+        if count == 2:
+            break
     return 'a'
     #return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
         
