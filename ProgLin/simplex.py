@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
-def swapRow(M, row1, row2): # operacion elemental de intercambiar renglones
-    M[[row1, row2]] = M[[row2, row1]]
-    return M
-    
-def multRow(M, row, factor): # operacion elemental de multiplicar renglones por una constante
-    M[row,:] = M[row,:] * factor
-    return M
-    
-def addRow(M, row1, row2, factor): # operacion elemental de sumar un multiplo de un renglon a otro
-     M[row2,:] = M[row2,:] + multRow(M.copy(), row1, factor)[row1, :]
-     return M
  
 def pivoteo(M, row, column): # se pivotea un renglon y una columna de la matriz 
+    def swapRow(M, row1, row2): # operacion elemental de intercambiar renglones
+        M[[row1, row2]] = M[[row2, row1]]
+        return M
+        
+    def multRow(M, row, factor): # operacion elemental de multiplicar renglones por una constante
+        M[row,:] = M[row,:] * factor
+        return M
+        
+    def addRow(M, row1, row2, factor): # operacion elemental de sumar un multiplo de un renglon a otro
+         M[row2,:] = M[row2,:] + multRow(M.copy(), row1, factor)[row1, :]
+         return M
     M = np.array(M, dtype = float)
     if M[row, column] != 1:
         M = multRow(M, row, 1/M[row, column])
@@ -63,9 +62,10 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
     else:
         return "unbounded", 0,0 
 
+def basica(column):
+    return sum(column) == 1 and len([c for c in column if c == 0]) == len(column) - 1
+
 def sbfInterpret(tbl):
-    def basica(column):
-        return sum(column) == 1 and len([c for c in column if c == 0]) == len(column) - 1
     columns = np.array(tbl).T
     sols = []
     for column in columns[:-1]:
@@ -75,13 +75,18 @@ def sbfInterpret(tbl):
             sol = columns[-1][one_index]
         sols.append(sol)
     return sols
+def getZ(tbl):
+    return tbl.flat[-1]
 
 def multSols(tbl):
+    for column in tbl.T:
+        if basica(column) and column[-1]==0: 
+            return True
     return False
      
 def simplex(A, b, c, M):
     tbl = canonica(A, b, c)
-    print('la matriz original se ve asi:')
+    # print('la matriz original se ve asi:')
     print(tbl)
     A = np.transpose(np.transpose(tbl)[:-1])
     A, auxVars = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M
@@ -100,7 +105,7 @@ def simplex(A, b, c, M):
         print('nuestra matriz pivoteada se ve asi: ')
         print(tbl)
     if not solIsEmpty(tbl, auxVars): return "the solution space is empty"
-    if multSols(tbl): return tbl, "there are multiple solutions"
+    if multSols(tbl): return tbl, "there are multiple solutions and one of them is the last one: "
     return tbl, 'esta es nuestra tabla optima'
         
 def main():
@@ -111,11 +116,12 @@ def main():
         ]
     b = [10,2,6]
     c = [0,-9,-1,0,2,1]
-    #out = ''
     tbl, comment = simplex(A, b, c, 100)
     print(comment)
-    if comment == 'esta es nuestra tabla optima':
+    if comment == 'esta es nuestra tabla optima' or comment == "there are multiple solutions and one of them is the last one: ":
         print('y nuestra sbf se ve asi: ')
         print(sbfInterpret(tbl))
+        print('con valor: ')
+        print(getZ(tbl))
         
 if __name__=="__main__": main() # lo que se corre
