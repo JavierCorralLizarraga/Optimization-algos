@@ -38,7 +38,8 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
     b = tbl[:,-1][:-1]
     ratios = [] # arreglo para acumular los ratios
     for i,j in zip(a,b):
-        ratios.append(j/i) # calculamos los ratios
+        if i != 0:
+            ratios.append(j/i) # calculamos los ratios
     ratios = np.array(ratios)
     if np.any(ratios > 0): # si encontramos ratios positivos
         m = min(ratios) # tomamos el minimo
@@ -67,12 +68,21 @@ def simplex(A, b, c, M):
     tbl = np.hstack((A,b))
     print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
     print(tbl)
-    #while True: # iteramos un rato
-    #     if isOptimal(tbl): break # rompemos si es optimo
-    #     pv, row, column = findPivotVariable(tbl) # encontramos la variable pivote
-    #     if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
-    #     tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
-    # return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
+    #pv, row, column = findPivotVariable(tbl)
+    count = 0
+    while True: # iteramos un rato
+        if isOptimal(tbl): break # rompemos si es optimo
+        print('la matriz no es optima')
+        pv, column, row = findPivotVariable(tbl) # encontramos la variable pivote
+        print('el valor del pivote es: ' + str(pv) + ' con columna: ' + str(column+1) + ' y renglon: ' + str(row+1))
+        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+        tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
+        print(count)
+        count = count+1
+        if count == 10:
+            break
+    return 'a'
+    #return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
         
 def main():
     A = [
@@ -84,6 +94,7 @@ def main():
         ]
     b = [2, 10, 5, -5, 2]
     c = [3, 6, -1, 2, 7, 0, 0, 0, 0, 0]
+    #out = ''
     simplex(A, b, c, 100)
     #print(tbl)
 
