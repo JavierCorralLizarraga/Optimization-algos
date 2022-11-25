@@ -87,7 +87,7 @@ def multSols(tbl): # determinar si hay multiples soluciones
      
 def simplex(A, b, c, M):
     tbl = canonica(A, b, c)
-    # print('la matriz original se ve asi:')
+    print('la matriz original se ve asi:')
     print(tbl)
     A = np.transpose(np.transpose(tbl)[:-1])
     A, auxVars = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M

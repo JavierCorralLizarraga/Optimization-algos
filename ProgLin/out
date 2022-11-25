@@ -15,6 +15,8 @@ nuestra matriz pivoteada se ve asi:
  [  1.    0.  152.    3.    3.    0.    3.    1.    0.   32. ]
  [  0.    0.   -9.   -0.2   0.8   1.   -0.2   0.    1.    4. ]
  [  0.    0.   89.    1.8   3.8   1.  101.8 100.  100.   18. ]]
-esta es nuestra tabla optima
+there are multiple solutions and one of them is the last one: 
 y nuestra sbf se ve asi: 
 [32.0, 2.0, 0, 0, 0, 0, 0, 0, 0]
+con valor: 
+18.0
