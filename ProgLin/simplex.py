@@ -62,10 +62,10 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
     else:
         return "unbounded", 0,0 
 
-def basica(column):
+def basica(column): # determina si una columna es basica
     return sum(column) == 1 and len([c for c in column if c == 0]) == len(column) - 1
 
-def sbfInterpret(tbl):
+def sbfInterpret(tbl): # saca la sbf de la tabla optima
     columns = np.array(tbl).T
     sols = []
     for column in columns[:-1]:
@@ -75,10 +75,11 @@ def sbfInterpret(tbl):
             sol = columns[-1][one_index]
         sols.append(sol)
     return sols
-def getZ(tbl):
+
+def getZ(tbl): # obtiene el valor optimo de la tabla optima
     return tbl.flat[-1]
 
-def multSols(tbl):
+def multSols(tbl): # determinar si hay multiples soluciones
     for column in tbl.T:
         if basica(column) and column[-1]==0: 
             return True
