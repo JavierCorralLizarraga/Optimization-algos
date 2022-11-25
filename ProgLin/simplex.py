@@ -63,10 +63,9 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
     else:
         return "unbounded", 0,0 
 
-def basica(column):
-    return sum(column) == 1 and len([c for c in column if c == 0]) == len(column) - 1
-
 def sbfInterpret(tbl):
+    def basica(column):
+        return sum(column) == 1 and len([c for c in column if c == 0]) == len(column) - 1
     columns = np.array(tbl).T
     sols = []
     for column in columns[:-1]:
@@ -76,6 +75,9 @@ def sbfInterpret(tbl):
             sol = columns[-1][one_index]
         sols.append(sol)
     return sols
+
+def multSols(tbl):
+    return False
      
 def simplex(A, b, c, M):
     tbl = canonica(A, b, c)
@@ -98,7 +100,7 @@ def simplex(A, b, c, M):
         print('nuestra matriz pivoteada se ve asi: ')
         print(tbl)
     if not solIsEmpty(tbl, auxVars): return "the solution space is empty"
-    #if multSol(tbl): return tbl, "there are multiple solutions"
+    if multSols(tbl): return tbl, "there are multiple solutions"
     return tbl, 'esta es nuestra tabla optima'
         
 def main():

@@ -1,0 +1,20 @@
+la matriz original se ve asi:
+[[  0.   5.  50.   1.   1.   0.  10.]
+ [  1. -15.   2.   0.   0.   0.   2.]
+ [  0.   1.   1.   0.   1.   1.   6.]
+ [  0.  -9.  -1.   0.   2.   1.   0.]]
+la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:
+[[  0.   5.  50.   1.   1.   0.   1.   0.   0.  10.]
+ [  1. -15.   2.   0.   0.   0.   0.   1.   0.   2.]
+ [  0.   1.   1.   0.   1.   1.   0.   0.   1.   6.]
+ [  0.  -9.  -1.   0.   2.   1. 100. 100. 100.   0.]]
+la matriz no es optima, asi que pivotearemos
+el valor del pivote es: 5.0 con columna: 2 y renglon: 1
+nuestra matriz pivoteada se ve asi: 
+[[  0.    1.   10.    0.2   0.2   0.    0.2   0.    0.    2. ]
+ [  1.    0.  152.    3.    3.    0.    3.    1.    0.   32. ]
+ [  0.    0.   -9.   -0.2   0.8   1.   -0.2   0.    1.    4. ]
+ [  0.    0.   89.    1.8   3.8   1.  101.8 100.  100.   18. ]]
+esta es nuestra tabla optima
+y nuestra sbf se ve asi: 
+[32.0, 2.0, 0, 0, 0, 0, 0, 0, 0]
