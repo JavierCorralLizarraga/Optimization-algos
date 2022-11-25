@@ -29,6 +29,16 @@ def convertGranM(A, M): # le agrega a nuestro tableo una identidad con coeficien
 def isOptimal(tbl): # checa si es optima la solucion basica factible
     return True if np.all(tbl[-1][:-1] >=0) else False # si todos los coeficientes son no negativos
     
+def canonica(A, b, c): # tomamos nuestras matrices y arreglos creamos un tableo
+    A = np.array(A)
+    tbl = np.hstack((A, np.array(b)[:,np.newaxis]))
+    z = c + [0]
+    tbl = np.vstack((tbl, z))
+    return tbl.astype(float)
+
+def solIsEmpty(tbl, auxVars):
+    return np.any(tbl[-1][-auxVars:] >= 0) # si alguna de los coeficientes de las vars auxiliares es positivo
+
 def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continuacion
     coefs = tbl[-1][:-1]
     minNegCoef =  min(coefs[:-1]) # encuentra el coeficiente mas negativo por regla de Bland
@@ -40,60 +50,53 @@ def findPivotVariable(tbl): # encuentra la variable que sera pivoteada a continu
     for i,j in zip(a,b):
         if i != 0:
             ratios.append(j/i) # calculamos los ratios
+        else:
+            ratios.append(0)
     ratios = np.array(ratios)
-    if np.any(ratios > 0): # si encontramos ratios positivos
-        m = min(ratios) # tomamos el minimo
+    if np.any(ratios > 0): #si encontramos ratios positivos
+        m = min([i for i in ratios if i > 0]) # tomamos el minimo
         index2 = np.where(ratios == m) # encontramos en que renglon esta
         return tbl[index, index2].flat[0], np.array(index2).flat[0], index # regresamos el valor de la variable pivote, su renglon y su columna
     else:
         return "unbounded", 0,0 
-    
-def canonica(A, b, c): # tomamos nuestras matrices y arreglos creamos un tableo
-    A = np.array(A)
-    tbl = np.hstack((A, np.array(b)[:,np.newaxis]))
-    z = c + [0]
-    tbl = np.vstack((tbl, z))
-    return tbl.astype(float)
-
-def solIsEmpty(tbl, auxVars):
-    return np.any(tbl[-1][-auxVars:] >= 0) # si alguna de los coeficientes de las vars auxiliares es positivo
  
 def simplex(A, b, c, M):
     tbl = canonica(A, b, c)
     print('la matriz original se ve asi:')
     print(tbl)
-    A = np.transpose(np.transpose(tbl)[:-1])
-    A = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M
-    b = np.transpose(tbl)[-1].reshape(-1, 1)
-    tbl = np.hstack((A,b))
-    print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
+    # A = np.transpose(np.transpose(tbl)[:-1])
+    # A = convertGranM(A, M) # agrega las vars auxiliares para aplicar el metodo de la gran M
+    # b = np.transpose(tbl)[-1].reshape(-1, 1)
+    # tbl = np.hstack((A,b))
+    # print(tbl)
+    # print('la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:')
+    # print(tbl)
+    pv, row, column = findPivotVariable(tbl)
+    tbl = pivoteo(tbl, row, column)
     print(tbl)
-    #pv, row, column = findPivotVariable(tbl)
-    count = 0
-    while True: # iteramos un rato
-        if isOptimal(tbl): break # rompemos si es optimo
-        print('la matriz no es optima')
-        pv, column, row = findPivotVariable(tbl) # encontramos la variable pivote
-        print('el valor del pivote es: ' + str(pv) + ' con columna: ' + str(column+1) + ' y renglon: ' + str(row+1))
-        if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
-        tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
-        print(count)
-        count = count+1
-        if count == 10:
-            break
+    # count = 0
+    # while True: # iteramos un rato
+    #     if isOptimal(tbl): break # rompemos si es optimo
+    #     print('la matriz no es optima')
+    #     pv, column, row = findPivotVariable(tbl) # encontramos la variable pivote
+    print('el valor del pivote es: ' + str(pv) + ' con columna: ' + str(column+1) + ' y renglon: ' + str(row+1))
+    #     if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
+    #     tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
+    #     print(count)
+    #     count = count+1
+    #     if count == 10:
+    #         break
     return 'a'
     #return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
         
 def main():
     A = [
-        [1, 1, -1, 0, 0, 1, 0, 0, 0, 0], 
-        [1, 1, 2, 3, 0, 0, 1, 0, 0, 0],
-        [3, 0, 0, 1, -1, 0, 0, 1, 0, 0], 
-        [-3, 0, 0, -1, 1, 0, 0, 0, 1, 0], 
-        [0, 1, 2, 0, 0, 0, 0, 0, 0, 1]
+        [0,5,50,1,1,0],
+        [1,-15,2,0,0,0],
+        [0,1,1,0,1,1]
         ]
-    b = [2, 10, 5, -5, 2]
-    c = [3, 6, -1, 2, 7, 0, 0, 0, 0, 0]
+    b = [10,2,6]
+    c = [0,-9,-1,0,2,1]
     #out = ''
     simplex(A, b, c, 100)
     #print(tbl)
