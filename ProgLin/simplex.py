@@ -110,13 +110,16 @@ def simplex(A, b, c, M):
     return tbl, 'esta es nuestra tabla optima'
         
 def main():
+    np.set_printoptions(linewidth=np.inf)
     A = [
-        [0,5,50,1,1,0],
-        [1,-15,2,0,0,0],
-        [0,1,1,0,1,1]
+        [1,1,-1,0,-1,0,0,0],
+        [1,1,2,3,0,1,0,0],
+        [1,2,-1,2,0,0,1,0],
+        [0,1,0,2,0,0,0,1],
         ]
-    b = [10,2,6]
-    c = [0,-9,-1,0,2,1]
+    print(np.array(A))
+    b = [2,10,6,5]
+    c = [3,6,-1,2,0,0,0,0]
     tbl, comment = simplex(A, b, c, 100)
     print(comment)
     if comment == 'esta es nuestra tabla optima' or comment == "there are multiple solutions and one of them is the last one: ":

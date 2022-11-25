@@ -1,0 +1,29 @@
+[[ 1  1 -1  0 -1  0  0  0]
+ [ 1  1  2  3  0  1  0  0]
+ [ 1  2 -1  2  0  0  1  0]
+ [ 0  1  0  2  0  0  0  1]]
+la matriz original se ve asi:
+[[ 1.  1. -1.  0. -1.  0.  0.  0.  2.]
+ [ 1.  1.  2.  3.  0.  1.  0.  0. 10.]
+ [ 1.  2. -1.  2.  0.  0.  1.  0.  6.]
+ [ 0.  1.  0.  2.  0.  0.  0.  1.  5.]
+ [ 3.  6. -1.  2.  0.  0.  0.  0.  0.]]
+la matriz con las variables auxiliares para aplicar el metodo de la gran M se ve asi:
+[[  1.   1.  -1.   0.  -1.   0.   0.   0.   1.   0.   0.   0.   2.]
+ [  1.   1.   2.   3.   0.   1.   0.   0.   0.   1.   0.   0.  10.]
+ [  1.   2.  -1.   2.   0.   0.   1.   0.   0.   0.   1.   0.   6.]
+ [  0.   1.   0.   2.   0.   0.   0.   1.   0.   0.   0.   1.   5.]
+ [  3.   6.  -1.   2.   0.   0.   0.   0. 100. 100. 100. 100.   0.]]
+la matriz no es optima, asi que pivotearemos
+el valor del pivote es: 2.0 con columna: 3 y renglon: 2
+nuestra matriz pivoteada se ve asi: 
+[[  1.5   1.5   0.    1.5  -1.    0.5   0.    0.    1.    0.5   0.    0.    7. ]
+ [  0.5   0.5   1.    1.5   0.    0.5   0.    0.    0.    0.5   0.    0.    5. ]
+ [  1.5   2.5   0.    3.5   0.    0.5   1.    0.    0.    0.5   1.    0.   11. ]
+ [  0.    1.    0.    2.    0.    0.    0.    1.    0.    0.    0.    1.    5. ]
+ [  3.5   6.5   0.    3.5   0.    0.5   0.    0.  100.  100.5 100.  100.    5. ]]
+there are multiple solutions and one of them is the last one: 
+y nuestra sbf se ve asi: 
+[0, 0, 5.0, 0, 0, 0, 11.0, 5.0, 0, 0, 0, 0]
+con valor: 
+5.0
