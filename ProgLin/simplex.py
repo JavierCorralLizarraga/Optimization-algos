@@ -84,10 +84,9 @@ def simplex(A, b, c, M):
         if pv == "unbounded": return "unbounded" # rompemos si es un problema no acotado
         tbl = pivoteo(tbl, row, column) # pivoteamos sobre la variable pivote
         print(tbl)
-        print(count)
         count = count+1
-        if count == 2:
-            break
+        #if count == 2:
+        #    break
     return 'a'
     #return tbl if solIsEmpty(tbl, auxVars) else "the solution space is empty"
         
